@@ -25,9 +25,6 @@ jobs:
         - runner: macos-latest
           target: aarch64-apple-darwin
           compiler: clang
-        - runner: macos-latest
-          target: x86_64-apple-darwin
-          compiler: clang
 
     steps:
     - name: Checkout ${{ github.repository }}
