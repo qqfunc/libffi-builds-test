@@ -49,7 +49,7 @@ jobs:
     - name: Set environmental variables
       run: echo ""
     - name: Configure
-      working-directory: source/${{ steps.version.outputs.libffi }}
+      working-directory: source/libffi-${{ steps.version.outputs.libffi }}
       run: >
         ./configure
         --prefix=${{ github.workspace }}/libffi
@@ -57,7 +57,7 @@ jobs:
         CC=${{ matrix.build.compiler }}
         CXX=${{ matrix.build.compiler }}
     - name: Build
-      working-directory: source/${{ steps.version.outputs.libffi }}
+      working-directory: source/libffi-${{ steps.version.outputs.libffi }}
       run: make install
     - name: Upload libffi artifact
       uses: actions/upload-artifact@v4
