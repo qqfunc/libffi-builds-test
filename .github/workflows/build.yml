@@ -53,12 +53,9 @@ jobs:
         --host=${{ matrix.build.target }}
         CC=${{ matrix.build.compiler }}
         CXX=${{ matrix.build.compiler }}
-    - name: Count CPU cores
-      id: cpu
-      run: echo "cores=$(($(grep cpu.cores /proc/cpuinfo | sort -u | sed 's/[^0-9]//g') + 1))" >> $GITHUB_OUTPUT
     - name: Build
       working-directory: source/libffi-${{ steps.version.outputs.libffi }}
-      run: make -j${{ steps.cpu.outputs.cores }} install
+      run: make -j$(nproc) install
     - name: Upload libffi artifact
       uses: actions/upload-artifact@v4
       with:
