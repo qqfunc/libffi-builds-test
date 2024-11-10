@@ -55,7 +55,7 @@ jobs:
         CXX=${{ matrix.build.compiler }}
     - name: Build
       working-directory: source/libffi-${{ steps.version.outputs.libffi }}
-      run: make install
+      run: make -j$(nproc) install
     - name: Upload libffi artifact
       uses: actions/upload-artifact@v4
       with:
