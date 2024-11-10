@@ -1,2 +1,2 @@
-# libffi-builds-test
+# libffi builds
 Alternative libffi builds.
