@@ -20,11 +20,14 @@ jobs:
       matrix:
         build:
         - runner: ubuntu-latest
+          arch: x86_64
           target: x86_64-unknown-linux-gnu
-          compiler: gcc
         - runner: macos-latest
+          arch: aarch
           target: aarch64-apple-darwin
-          compiler: clang
+        - runner: macos-latest
+          arch: x86_64
+          target: x86_64-apple-darwin
 
     steps:
     - name: Checkout ${{ github.repository }}
@@ -51,8 +54,10 @@ jobs:
         ./configure
         --prefix=${{ github.workspace }}/libffi
         --host=${{ matrix.build.target }}
-        CC=${{ matrix.build.compiler }}
-        CXX=${{ matrix.build.compiler }}
+        CC=clang
+        CFLAGS="-arch=${{ matrix.build.arch }} --target=${{ matrix.build.target }}"
+        CXX=clang
+        CXXFLAGS="-arch=${{ matrix.build.arch }} --target=${{ matrix.build.target }}"
     - name: Build
       working-directory: source/libffi-${{ steps.version.outputs.libffi }}
       run: make -j$(nproc) install
