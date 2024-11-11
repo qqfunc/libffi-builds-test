@@ -55,9 +55,9 @@ jobs:
         --prefix=${{ github.workspace }}/libffi
         --host=${{ matrix.build.target }}
         CC=clang
-        CFLAGS="-arch=${{ matrix.build.arch }} --target=${{ matrix.build.target }}"
+        CFLAGS="-arch=${{ matrix.build.arch }}"
         CXX=clang
-        CXXFLAGS="-arch=${{ matrix.build.arch }} --target=${{ matrix.build.target }}"
+        CXXFLAGS="-arch=${{ matrix.build.arch }}"
     - name: Build
       working-directory: source/libffi-${{ steps.version.outputs.libffi }}
       run: make -j$(nproc) install
