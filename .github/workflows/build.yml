@@ -55,16 +55,16 @@ jobs:
         --prefix=${{ github.workspace }}/libffi
         --host=${{ matrix.build.target }}
         CC=clang
-        CFLAGS="-arch=${{ matrix.build.arch }}"
+        CFLAGS="-target=${{ matrix.build.target }}"
         CXX=clang
-        CXXFLAGS="-arch=${{ matrix.build.arch }}"
+        CXXFLAGS="-target=${{ matrix.build.target }}"
     - name: Build
       working-directory: source/libffi-${{ steps.version.outputs.libffi }}
       run: make -j$(nproc) install
     - name: Upload libffi artifact
       uses: actions/upload-artifact@v4
       with:
-        name: libffi-${{ matrix.build.target }}-${{ matrix.build.compiler }}
+        name: libffi-${{ matrix.build.target }}
         path: ${{ github.workspace }}/libffi
         if-no-files-found: error
         retention-days: 1
