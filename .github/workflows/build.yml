@@ -86,21 +86,41 @@ jobs:
         build:
         - target: aarch64-apple-ios10.0
           sdk: iphoneos
+        - target: arm64e-apple-ios10.0
+          sdk: iphoneos
+        - target: armv7s-apple-ios10.0
+          sdk: iphoneos
+        - target: i386-apple-ios10.0
+          sdk: iphoneos
         - target: aarch64-apple-ios10.0-simulator
           sdk: iphonesimulator
         - target: x86_64-apple-ios10.0-simulator
           sdk: iphonesimulator
         - target: aarch64-apple-darwin10.0
           sdk: macosx
+        - target: arm64e-apple-darwin10.0
+          sdk: macosx
         - target: x86_64-apple-darwin10.0
           sdk: macosx
+        - target: x86_64h-apple-darwin10.0
+          sdk: macosx
+        - target: i686-apple-darwin10.0
+          sdk: macosx
         - target: aarch64-apple-tvos9.0
+          sdk: appletvos
+        - target: arm64e-apple-tvos9.0
+          sdk: appletvos
+        - target: x86_64-apple-tvos9.0
           sdk: appletvos
         - target: aarch64-apple-tvos9.0-simulator
           sdk: appletvsimulator
         - target: x86_64-apple-tvos9.0-simulator
           sdk: appletvsimulator
         - target: aarch64-apple-watchos2.0
+          sdk: watchos
+        - target: arm64_32-apple-watchos2.0
+          sdk: watchos
+        - target: armv7k-apple-watchos2.0
           sdk: watchos
         - target: aarch64-apple-watchos2.0-simulator
           sdk: watchsimulator
