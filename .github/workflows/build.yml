@@ -90,7 +90,11 @@ jobs:
           sdk: iphonesimulator
         - target: x86_64-apple-ios10.0-simulator
           sdk: iphonesimulator
-        - target: aarch64-apple-ios10.0-macabi
+        - target: aarch64-apple-ios13.0-macabi
+          sdk: macosx
+        - target: aarch64-apple-darwin10.0
+          sdk: macosx
+        - target: x86_64-apple-darwin10.0
           sdk: macosx
         - target: aarch64-apple-tvos9.0
           sdk: appletvos
@@ -98,12 +102,6 @@ jobs:
           sdk: appletvsimulator
         - target: x86_64-apple-tvos9.0-simulator
           sdk: appletvsimulator
-        - target: aarch64-apple-xros1.0
-          sdk: visionos
-        - target: aarch64-apple-xros1.0-simulator
-          sdk: visionos
-        - target: x86_64-apple-xros1.0-simulator
-          sdk: visionos
         - target: aarch64-apple-watchos2.0
           sdk: watchos
         - target: aarch64-apple-watchos2.0-simulator
