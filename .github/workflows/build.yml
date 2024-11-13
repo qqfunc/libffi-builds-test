@@ -86,10 +86,43 @@ jobs:
         build:
         - target: aarch64-apple-ios
           sdk: iphoneos
-          min-version: 12.0
-        - target: aarch64-apple-ios-sim
+          min-version: 2.0
+        - target: aarch64-apple-ios-simulator
           sdk: iphonesimulator
-          min-version: 12.0
+          min-version: 2.0
+        - target: x86_64-apple-ios-simulator
+          sdk: iphonesimulator
+          min-version: 2.0
+        - target: aarch64-apple-ios-macabi
+          sdk: macosx
+          min-version: 13.0
+        - target: aarch64-apple-tvos
+          sdk: appletvos
+          min-version: 9.0
+        - target: aarch64-apple-tvos-simulator
+          sdk: appletvsimulator
+          min-version: 9.0
+        - target: x86_64-apple-tvos-simulator
+          sdk: appletvsimulator
+          min-version: 9.0
+        - target: aarch64-apple-visionos
+          sdk: visionos
+          min-version: 1.0
+        - target: aarch64-apple-visionos-simulator
+          sdk: visionos
+          min-version: 1.0
+        - target: x86_64-apple-visionos-simulator
+          sdk: visionos
+          min-version: 1.0
+        - target: aarch64-apple-watchos
+          sdk: watchos
+          min-version: 2.0
+        - target: aarch64-apple-watchos-simulator
+          sdk: watchsimulator
+          min-version: 2.0
+        - target: x86_64-apple-watchos-simulator
+          sdk: watchsimulator
+          min-version: 2.0
 
     steps:
     - name: Checkout ${{ github.repository }}
@@ -116,60 +149,6 @@ jobs:
         CXX=clang
         CXXFLAGS="--target=${{ matrix.build.target }}${{ matrix.build.min-version }} --sysroot=$(xcrun --sdk ${{ matrix.build.sdk }} --show-sdk-path)"
         LDFLAGS="--target=${{ matrix.build.target }}${{ matrix.build.min-version }} --sysroot=$(xcrun --sdk ${{ matrix.build.sdk }} --show-sdk-path)"
-    - name: Build
-      working-directory: source/libffi-${{ needs.fetch.outputs.libffi-version }}
-      run: make -j$(nproc) install
-    - name: Upload libffi artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: libffi-${{ matrix.build.target }}
-        path: ${{ github.workspace }}/libffi
-        if-no-files-found: error
-        retention-days: 1
-
-  build-windows:
-    name: Build (${{ matrix.build.target }})
-    needs: fetch
-    runs-on: windows-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        build:
-        - target: x86_64-pc-windows-gnu
-          msys: mingw64
-
-    defaults:
-      run:
-        shell: msys {0}
-
-    steps:
-    - name: Checkout ${{ github.repository }}
-      uses: actions/checkout@v4
-    - name: Download libffi
-      working-directory: source
-      run: >
-        gh release -R libffi/libffi
-        download v${{ needs.fetch.outputs.libffi-version }}
-        -p libffi-${{ needs.fetch.outputs.libffi-version }}.tar.gz
-      env:
-        GH_TOKEN: ${{ github.token }}
-    - name: Extract tarball
-      working-directory: source
-      run: tar -xzf libffi-${{ needs.fetch.outputs.libffi-version }}.tar.gz
-    - name: Set up MSYS2
-      uses: msys2/setup-msys2@v2
-      with:
-        msystem: ${{ matrix.build.msys }}
-        update: true
-        pacboy: gcc:p
-    - name: Configure
-      working-directory: source/libffi-${{ needs.fetch.outputs.libffi-version }}
-      run: >
-        ./configure
-        --prefix=${{ github.workspace }}/libffi
-        --host=${{ matrix.build.target }}
-        CC=clang
-        CXX=clang
     - name: Build
       working-directory: source/libffi-${{ needs.fetch.outputs.libffi-version }}
       run: make -j$(nproc) install
