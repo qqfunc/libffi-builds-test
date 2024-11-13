@@ -84,45 +84,32 @@ jobs:
       fail-fast: false
       matrix:
         build:
-        - target: aarch64-apple-ios
+        - target: aarch64-apple-ios10.0
           sdk: iphoneos
-          min-version: 2.0
-        - target: aarch64-apple-ios-simulator
+        - target: aarch64-apple-ios10.0-simulator
           sdk: iphonesimulator
-          min-version: 2.0
-        - target: x86_64-apple-ios-simulator
+        - target: x86_64-apple-ios10.0-simulator
           sdk: iphonesimulator
-          min-version: 2.0
-        - target: aarch64-apple-ios-macabi
+        - target: aarch64-apple-ios10.0-macabi
           sdk: macosx
-          min-version: 13.0
-        - target: aarch64-apple-tvos
+        - target: aarch64-apple-tvos9.0
           sdk: appletvos
-          min-version: 9.0
-        - target: aarch64-apple-tvos-simulator
+        - target: aarch64-apple-tvos9.0-simulator
           sdk: appletvsimulator
-          min-version: 9.0
-        - target: x86_64-apple-tvos-simulator
+        - target: x86_64-apple-tvos9.0-simulator
           sdk: appletvsimulator
-          min-version: 9.0
-        - target: aarch64-apple-visionos
+        - target: aarch64-apple-xros1.0
           sdk: visionos
-          min-version: 1.0
-        - target: aarch64-apple-visionos-simulator
+        - target: aarch64-apple-xros1.0-simulator
           sdk: visionos
-          min-version: 1.0
-        - target: x86_64-apple-visionos-simulator
+        - target: x86_64-apple-xros1.0-simulator
           sdk: visionos
-          min-version: 1.0
-        - target: aarch64-apple-watchos
+        - target: aarch64-apple-watchos2.0
           sdk: watchos
-          min-version: 2.0
-        - target: aarch64-apple-watchos-simulator
+        - target: aarch64-apple-watchos2.0-simulator
           sdk: watchsimulator
-          min-version: 2.0
-        - target: x86_64-apple-watchos-simulator
+        - target: x86_64-apple-watchos2.0-simulator
           sdk: watchsimulator
-          min-version: 2.0
 
     steps:
     - name: Checkout ${{ github.repository }}
@@ -143,12 +130,12 @@ jobs:
       run: >
         ./configure
         --prefix=${{ github.workspace }}/libffi
-        --host=${{ matrix.build.target }}${{ matrix.build.min-version }}
+        --host=${{ matrix.build.target }}
         CC=clang
-        CFLAGS="--target=${{ matrix.build.target }}${{ matrix.build.min-version }} --sysroot=$(xcrun --sdk ${{ matrix.build.sdk }} --show-sdk-path)"
+        CFLAGS="--target=${{ matrix.build.target }} --sysroot=$(xcrun --sdk ${{ matrix.build.sdk }} --show-sdk-path)"
         CXX=clang
-        CXXFLAGS="--target=${{ matrix.build.target }}${{ matrix.build.min-version }} --sysroot=$(xcrun --sdk ${{ matrix.build.sdk }} --show-sdk-path)"
-        LDFLAGS="--target=${{ matrix.build.target }}${{ matrix.build.min-version }} --sysroot=$(xcrun --sdk ${{ matrix.build.sdk }} --show-sdk-path)"
+        CXXFLAGS="--target=${{ matrix.build.target }} --sysroot=$(xcrun --sdk ${{ matrix.build.sdk }} --show-sdk-path)"
+        LDFLAGS="--target=${{ matrix.build.target }} --sysroot=$(xcrun --sdk ${{ matrix.build.sdk }} --show-sdk-path)"
     - name: Build
       working-directory: source/libffi-${{ needs.fetch.outputs.libffi-version }}
       run: make -j$(nproc) install
