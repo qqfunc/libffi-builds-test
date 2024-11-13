@@ -90,8 +90,6 @@ jobs:
           sdk: iphonesimulator
         - target: x86_64-apple-ios10.0-simulator
           sdk: iphonesimulator
-        - target: aarch64-apple-ios13.0-macabi
-          sdk: macosx
         - target: aarch64-apple-darwin10.0
           sdk: macosx
         - target: x86_64-apple-darwin10.0
