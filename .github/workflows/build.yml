@@ -11,9 +11,24 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  fetch:
+    name: Fetch
+    runs-on: ubuntu-latest
+
+    outputs:
+      libffi-version: ${{ steps.fetch.outputs.libffi-version }}
+
+    steps:
+    - name: Checkout ${{ github.repository }}
+      uses: actions/checkout@v4
+    - name: Get build information from build.toml
+      id: fetch
+      run: |
+        echo "libffi-version=$(echo ./libffi-version)" >> $GITHUB_OUTPUT
+
   build:
     name: Build (${{ matrix.build.target }})
-
+    needs: fetch
     runs-on: ${{ matrix.build.runner }}
     strategy:
       fail-fast: false
@@ -29,24 +44,19 @@ jobs:
     steps:
     - name: Checkout ${{ github.repository }}
       uses: actions/checkout@v4
-    - name: Get libffi version
-      id: version
-      run: echo "libffi=$(cat ./libffi-version)" >> $GITHUB_OUTPUT
     - name: Download libffi
       working-directory: source
       run: >
         gh release -R libffi/libffi
-        download v${{ steps.version.outputs.libffi }}
-        -p libffi-${{ steps.version.outputs.libffi }}.tar.gz
+        download v${{ needs.fetch.outputs.libffi-version }}
+        -p libffi-${{ needs.fetch.outputs.libffi-version }}.tar.gz
       env:
         GH_TOKEN: ${{ github.token }}
     - name: Extract tarball
       working-directory: source
-      run: tar -xzf libffi-${{ steps.version.outputs.libffi }}.tar.gz
-    - name: Set environmental variables
-      run: echo ""
+      run: tar -xzf libffi-${{ needs.fetch.outputs.libffi-version }}.tar.gz
     - name: Configure
-      working-directory: source/libffi-${{ steps.version.outputs.libffi }}
+      working-directory: source/libffi-${{ needs.fetch.outputs.libffi-version }}
       run: >
         ./configure
         --prefix=${{ github.workspace }}/libffi
@@ -56,7 +66,58 @@ jobs:
         CXX=clang
         CXXFLAGS="--target=${{ matrix.build.target }}"
     - name: Build
-      working-directory: source/libffi-${{ steps.version.outputs.libffi }}
+      working-directory: source/libffi-${{ needs.fetch.outputs.libffi-version }}
+      run: make -j$(nproc) install
+    - name: Upload libffi artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: libffi-${{ matrix.build.target }}
+        path: ${{ github.workspace }}/libffi
+        if-no-files-found: error
+        retention-days: 1
+
+  build-apple:
+    name: Build (${{ matrix.build.target }})
+    needs: fetch
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        build:
+        - target: aarch64-apple-ios
+          sdk: iphoneos
+          min-version: 12.0
+        - target: aarch64-apple-ios-sim
+          sdk: iphonesimulator
+          min-version: 12.0
+
+    steps:
+    - name: Checkout ${{ github.repository }}
+      uses: actions/checkout@v4
+    - name: Download libffi
+      working-directory: source
+      run: >
+        gh release -R libffi/libffi
+        download v${{ needs.fetch.outputs.libffi-version }}
+        -p libffi-${{ needs.fetch.outputs.libffi-version }}.tar.gz
+      env:
+        GH_TOKEN: ${{ github.token }}
+    - name: Extract tarball
+      working-directory: source
+      run: tar -xzf libffi-${{ needs.fetch.outputs.libffi-version }}.tar.gz
+    - name: Configure
+      working-directory: source/libffi-${{ needs.fetch.outputs.libffi-version }}
+      run: >
+        ./configure
+        --prefix=${{ github.workspace }}/libffi
+        --host=${{ matrix.build.target }}${{ matrix.build.min-version }}
+        CC=clang
+        CFLAGS="--target=${{ matrix.build.target }}${{ matrix.build.min-version }} --sysroot=$(xcrun --sdk ${{ matrix.build.sdk }} --show-sdk-path)"
+        CXX=clang
+        CXXFLAGS="--target=${{ matrix.build.target }}${{ matrix.build.min-version }} --sysroot=$(xcrun --sdk ${{ matrix.build.sdk }} --show-sdk-path)"
+        LDFLAGS="--target=${{ matrix.build.target }}${{ matrix.build.min-version }} --sysroot=$(xcrun --sdk ${{ matrix.build.sdk }} --show-sdk-path)"
+    - name: Build
+      working-directory: source/libffi-${{ needs.fetch.outputs.libffi-version }}
       run: make -j$(nproc) install
     - name: Upload libffi artifact
       uses: actions/upload-artifact@v4
@@ -68,7 +129,7 @@ jobs:
 
   build-windows:
     name: Build (${{ matrix.build.target }})
-
+    needs: fetch
     runs-on: windows-latest
     strategy:
       fail-fast: false
@@ -84,20 +145,17 @@ jobs:
     steps:
     - name: Checkout ${{ github.repository }}
       uses: actions/checkout@v4
-    - name: Get libffi version
-      id: version
-      run: echo "libffi=$(cat ./libffi-version)" >> $GITHUB_OUTPUT
     - name: Download libffi
       working-directory: source
       run: >
         gh release -R libffi/libffi
-        download v${{ steps.version.outputs.libffi }}
-        -p libffi-${{ steps.version.outputs.libffi }}.tar.gz
+        download v${{ needs.fetch.outputs.libffi-version }}
+        -p libffi-${{ needs.fetch.outputs.libffi-version }}.tar.gz
       env:
         GH_TOKEN: ${{ github.token }}
     - name: Extract tarball
       working-directory: source
-      run: tar -xzf libffi-${{ steps.version.outputs.libffi }}.tar.gz
+      run: tar -xzf libffi-${{ needs.fetch.outputs.libffi-version }}.tar.gz
     - name: Set up MSYS2
       uses: msys2/setup-msys2@v2
       with:
@@ -105,7 +163,7 @@ jobs:
         update: true
         pacboy: gcc:p
     - name: Configure
-      working-directory: source/libffi-${{ steps.version.outputs.libffi }}
+      working-directory: source/libffi-${{ needs.fetch.outputs.libffi-version }}
       run: >
         ./configure
         --prefix=${{ github.workspace }}/libffi
@@ -113,7 +171,7 @@ jobs:
         CC=clang
         CXX=clang
     - name: Build
-      working-directory: source/libffi-${{ steps.version.outputs.libffi }}
+      working-directory: source/libffi-${{ needs.fetch.outputs.libffi-version }}
       run: make -j$(nproc) install
     - name: Upload libffi artifact
       uses: actions/upload-artifact@v4
