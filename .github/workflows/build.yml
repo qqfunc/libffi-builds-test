@@ -39,7 +39,7 @@ jobs:
     - name: Upload libffi source artifact
       uses: actions/upload-artifact@v4
       with:
-        name: libffi-${{ needs.fetch.outputs.libffi-version }}
+        name: libffi-${{ steps.fetch.outputs.libffi-version }}
         path: ${{ github.workspace }}/source/libffi-${{ steps.fetch.outputs.libffi-version }}
         if-no-files-found: error
         retention-days: 1
