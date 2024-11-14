@@ -25,6 +25,24 @@ jobs:
       id: fetch
       run: |
         echo "libffi-version=$(cat ./libffi-version)" >> $GITHUB_OUTPUT
+    - name: Download libffi source
+      working-directory: source
+      run: >
+        gh release -R libffi/libffi
+        download v${{ steps.fetch.outputs.libffi-version }}
+        -p libffi-${{ steps.fetch.outputs.libffi-version }}.tar.gz
+      env:
+        GH_TOKEN: ${{ github.token }}
+    - name: Extract tarball
+      working-directory: source
+      run: tar -xzf libffi-${{ steps.fetch.outputs.libffi-version }}.tar.gz
+    - name: Upload libffi source artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: libffi-${{ needs.fetch.outputs.libffi-version }}
+        path: ${{ github.workspace }}/source/libffi-${{ steps.fetch.outputs.libffi-version }}
+        if-no-files-found: error
+        retention-days: 1
 
   build:
     name: Build (${{ matrix.build.target }})
@@ -40,17 +58,11 @@ jobs:
     steps:
     - name: Checkout ${{ github.repository }}
       uses: actions/checkout@v4
-    - name: Download libffi
-      working-directory: source
-      run: >
-        gh release -R libffi/libffi
-        download v${{ needs.fetch.outputs.libffi-version }}
-        -p libffi-${{ needs.fetch.outputs.libffi-version }}.tar.gz
-      env:
-        GH_TOKEN: ${{ github.token }}
-    - name: Extract tarball
-      working-directory: source
-      run: tar -xzf libffi-${{ needs.fetch.outputs.libffi-version }}.tar.gz
+    - name: Download libffi source artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: libffi-${{ needs.fetch.outputs.libffi-version }}
+        path: ${{ github.workspace }}/source
     - name: Configure
       working-directory: source/libffi-${{ needs.fetch.outputs.libffi-version }}
       run: >
