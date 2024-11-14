@@ -33,14 +33,11 @@ jobs:
         -p libffi-${{ steps.fetch.outputs.libffi-version }}.tar.gz
       env:
         GH_TOKEN: ${{ github.token }}
-    - name: Extract tarball
-      working-directory: source
-      run: tar -xzf libffi-${{ steps.fetch.outputs.libffi-version }}.tar.gz
     - name: Upload libffi source artifact
       uses: actions/upload-artifact@v4
       with:
         name: libffi-${{ steps.fetch.outputs.libffi-version }}
-        path: ${{ github.workspace }}/source/libffi-${{ steps.fetch.outputs.libffi-version }}
+        path: ${{ github.workspace }}/source/libffi-${{ steps.fetch.outputs.libffi-version }}.tar.gz
         if-no-files-found: error
         retention-days: 1
 
@@ -62,9 +59,10 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: libffi-${{ needs.fetch.outputs.libffi-version }}
-        path: ${{ github.workspace }}/source
-    - working-directory: source
-      run: ls
+        path: ${{ github.workspace }}/source/libffi-${{ steps.fetch.outputs.libffi-version }}.tar.gz
+    - name: Extract tarball
+      working-directory: source
+      run: tar -xzf libffi-${{ steps.fetch.outputs.libffi-version }}.tar.gz
     - name: Configure
       working-directory: source/libffi-${{ needs.fetch.outputs.libffi-version }}
       run: >
