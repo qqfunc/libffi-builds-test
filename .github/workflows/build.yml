@@ -36,7 +36,7 @@ jobs:
     - name: Upload libffi source artifact
       uses: actions/upload-artifact@v4
       with:
-        name: libffi-${{ steps.fetch.outputs.libffi-version }}
+        name: libffi.tar.gz
         path: ${{ github.workspace }}/source/libffi-${{ steps.fetch.outputs.libffi-version }}.tar.gz
         if-no-files-found: error
         retention-days: 1
@@ -58,13 +58,13 @@ jobs:
     - name: Download libffi source artifact
       uses: actions/download-artifact@v4
       with:
-        name: libffi-${{ needs.fetch.outputs.libffi-version }}
-        path: ${{ github.workspace }}/source/libffi-${{ steps.fetch.outputs.libffi-version }}.tar.gz
-    - name: Extract tarball
+        name: libffi.tar.gz
+        path: ${{ github.workspace }}/source
+    - name: Extract source tarball
       working-directory: source
-      run: tar -xzf libffi-${{ steps.fetch.outputs.libffi-version }}.tar.gz
+      run: tar -xzf libffi.tar.gz
     - name: Configure
-      working-directory: source/libffi-${{ needs.fetch.outputs.libffi-version }}
+      working-directory: source/libffi
       run: >
         ./configure
         --prefix=${{ github.workspace }}/libffi
@@ -74,7 +74,7 @@ jobs:
         CXX=clang
         CXXFLAGS="--target=${{ matrix.build.target }}"
     - name: Build
-      working-directory: source/libffi-${{ needs.fetch.outputs.libffi-version }}
+      working-directory: source/libffi
       run: make -j$(nproc) install
     - name: Upload libffi artifact
       uses: actions/upload-artifact@v4
