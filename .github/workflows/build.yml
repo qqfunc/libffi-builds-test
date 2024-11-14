@@ -63,6 +63,8 @@ jobs:
       with:
         name: libffi-${{ needs.fetch.outputs.libffi-version }}
         path: ${{ github.workspace }}/source
+    - working-directory: source
+      run: ls
     - name: Configure
       working-directory: source/libffi-${{ needs.fetch.outputs.libffi-version }}
       run: >
