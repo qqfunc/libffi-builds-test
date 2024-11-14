@@ -175,7 +175,8 @@ jobs:
       with:
         msystem: ${{ matrix.build.msys }}
         update: true
-        pacboy: gcc:p tar:p
+        install: tar
+        pacboy: gcc:p
     - name: Checkout ${{ github.repository }}
       uses: actions/checkout@v4
     - name: Download libffi source artifact
