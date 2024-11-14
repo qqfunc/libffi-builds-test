@@ -62,7 +62,7 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: libffi-${{ needs.fetch.outputs.libffi-version }}
-        path: ${{ github.workspace }}/source/libffi
+        path: ${{ github.workspace }}/source
     - name: Configure
       working-directory: source/libffi-${{ needs.fetch.outputs.libffi-version }}
       run: >
