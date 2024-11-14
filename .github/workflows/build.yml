@@ -170,6 +170,12 @@ jobs:
         shell: msys {0}
 
     steps:
+    - name: Set up MSYS2
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: ${{ matrix.build.msys }}
+        update: true
+        pacboy: gcc:p
     - name: Checkout ${{ github.repository }}
       uses: actions/checkout@v4
     - name: Download libffi source artifact
@@ -180,12 +186,6 @@ jobs:
     - name: Extract tarball
       working-directory: source
       run: tar -xzf libffi-${{ needs.fetch.outputs.libffi-version }}.tar.gz
-    - name: Set up MSYS2
-      uses: msys2/setup-msys2@v2
-      with:
-        msystem: ${{ matrix.build.msys }}
-        update: true
-        pacboy: gcc:p
     - name: Configure
       working-directory: source/libffi-${{ needs.fetch.outputs.libffi-version }}
       run: >
