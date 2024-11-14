@@ -21,7 +21,7 @@ jobs:
     steps:
     - name: Checkout ${{ github.repository }}
       uses: actions/checkout@v4
-    - name: Get build information from build.toml
+    - name: Get build information
       id: fetch
       run: |
         echo "libffi-version=$(cat ./libffi-version)" >> $GITHUB_OUTPUT
@@ -64,7 +64,7 @@ jobs:
         name: libffi-${{ needs.fetch.outputs.libffi-version }}
         path: ${{ github.workspace }}/source/libffi
     - name: Configure
-      working-directory: source/libffi
+      working-directory: source/libffi-${{ needs.fetch.outputs.libffi-version }}
       run: >
         ./configure
         --prefix=${{ github.workspace }}/libffi
@@ -74,7 +74,7 @@ jobs:
         CXX=clang
         CXXFLAGS="--target=${{ matrix.build.target }}"
     - name: Build
-      working-directory: source/libffi
+      working-directory: source/libffi-${{ needs.fetch.outputs.libffi-version }}
       run: make -j$(nproc) install
     - name: Upload libffi artifact
       uses: actions/upload-artifact@v4
