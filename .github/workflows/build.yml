@@ -167,7 +167,7 @@ jobs:
 
     defaults:
       run:
-        shell: msys {0}
+        shell: msys2 {0}
 
     steps:
     - name: Set up MSYS2
@@ -175,7 +175,6 @@ jobs:
       with:
         msystem: ${{ matrix.build.msys }}
         update: true
-        pacboy: gcc:p
     - name: Checkout ${{ github.repository }}
       uses: actions/checkout@v4
     - name: Download libffi source artifact
