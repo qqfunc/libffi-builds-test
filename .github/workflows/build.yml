@@ -184,7 +184,7 @@ jobs:
         path: ${{ github.workspace }}/source
     - name: Extract tarball
       working-directory: source
-      run: bsdtar -xzf libffi-${{ needs.fetch.outputs.libffi-version }}.tar.gz
+      run: tar -xzf libffi-${{ needs.fetch.outputs.libffi-version }}.tar.gz
     - name: Configure
       working-directory: source/libffi-${{ needs.fetch.outputs.libffi-version }}
       run: >
