@@ -189,7 +189,7 @@ jobs:
       working-directory: source/libffi-${{ needs.fetch.outputs.libffi-version }}
       run: >
         ./configure
-        --prefix=${{ github.workspace }}/libffi
+        --prefix=$(cygpath -u ${{ github.workspace }})/libffi
         --host=${{ matrix.build.target }}
         CC=gcc
         CXX=gcc
