@@ -57,7 +57,7 @@ jobs:
       working-directory: source/libffi-${{ steps.version.outputs.libffi }}
       run: make -j$(nproc) install
     - name: Upload libffi artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: libffi-${{ matrix.build.target }}-${{ matrix.build.compiler }}
         path: ${{ github.workspace }}/libffi
